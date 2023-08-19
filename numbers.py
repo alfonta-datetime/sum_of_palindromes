@@ -47,7 +47,7 @@ class DeltaNumber:
         return f'DeltaNumber: {self.n_in_base}'
 
     @property
-    def assign_type(self):
+    def ntype(self):
         l = self.l
         g = self.g
 
@@ -92,3 +92,29 @@ class DeltaNumber:
                         return NType.B_4
                 elif self[l - 3] in (0, 1, 2):
                     return NType.B_5
+
+
+class PalindromeConstructor:
+    def __init__(self, number_of_digits, g, *digits):
+        self.g = g
+        self.l = number_of_digits
+        self._digit_array = ['.' for i in range(number_of_digits)]
+        for i, d in enumerate(digits):
+            self[i] = d
+
+    def __getitem__(self, item):
+        if isinstance(item, slice):
+            raise TypeError("PalindromeConstructor does not support slice notation")
+
+        digit = self._digit_array.__getitem__(self.l - 1 - item)
+        if digit == '.':
+            return '.'
+        else:
+            return int(digit, base=self.g)
+
+    def __setitem__(self, key, value):
+        self._digit_array.__setitem__(key, value)
+        self._digit_array.__setitem__(self.l - 1 - key, value)
+
+    def __repr__(self):
+        return f'PalindromeConstructor: {"".join(self._digit_array)}'
