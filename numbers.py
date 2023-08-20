@@ -14,7 +14,7 @@ def base_repr(n: int, g: int) -> str:
     return ''.join(reversed(base_g_digits)) or '0'
 
 
-class Palindrome:
+class NumberConstructor:
     def __init__(self, g, number_of_digits, *digits):
         self.g = g
         self.l = number_of_digits
@@ -25,7 +25,7 @@ class Palindrome:
 
     def __getitem__(self, item):
         if isinstance(item, slice):
-            raise TypeError("Palindrome does not support slice notation")
+            raise TypeError(f"{self.__class__.__name__} does not support slice notation")
 
         digit = self._digit_array.__getitem__(self.l - 1 - item)
         if digit == '.':
@@ -36,10 +36,23 @@ class Palindrome:
     def __setitem__(self, key, value: int or str):
         value = str(value)
         self._digit_array.__setitem__(key, value)
-        self._digit_array.__setitem__(self.l - 1 - key, value)
 
     def __repr__(self):
-        return f'Palindrome: {"".join(self._digit_array)}'
+        return f'{self.__class__.__name__}: {"".join(self._digit_array)}'
+
+
+class CarryColumn(NumberConstructor):
+    def __init__(self, g, number_of_digits, *digits):
+        super().__init__(g, number_of_digits, *digits)
+
+
+class Palindrome(NumberConstructor):
+    def __init__(self, g, number_of_digits, *digits):
+        super().__init__(g, number_of_digits, *digits)
+
+    def __setitem__(self, key, value: int or str):
+        super().__setitem__(key, value)
+        self._digit_array.__setitem__(self.l - 1 - key, value)
 
 
 class NType:
@@ -61,7 +74,6 @@ class NType:
 
 class DeltaNumber:
     def __init__(self, n, g):
-        self.n = n
         self.g = g
         self._ntype = None
 
@@ -87,7 +99,6 @@ class DeltaNumber:
             return self._ntype
 
         l = self.l
-        g = self.g
 
         # A types
         if self[l - 2] not in (0, 1, 2):
@@ -191,11 +202,10 @@ class DeltaNumber:
             raise TypeError('No NType assigned to self')
 
         return p1, p2, p3
-    
+
     @property
     def is_special(self):
         if self.p1.l % 2 == 0:
-            m = self.p1.l / 2
-            return self.p1.l[m] == 0 or self.p1.l[m-1] == 0
+            m = self.p1.l // 2
+            return self.p1.l[m] == 0 or self.p1.l[m - 1] == 0
         return False
-    
