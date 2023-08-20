@@ -21,7 +21,7 @@ class NumberConstructor:
         self._digit_array = ['.' for i in range(number_of_digits)]
 
         for i, d in enumerate(digits):
-            self[i] = d
+            self[i+1] = d
 
     def __getitem__(self, item):
         if isinstance(item, slice):
@@ -39,6 +39,8 @@ class NumberConstructor:
             return int(digit, base=self.g)
 
     def __setitem__(self, key, value: int or str):
+        if not 1 <= key <= self.l:
+            raise IndexError(f"{self.__class__.__name__} indexes must be between 1 and: {self.l}")
         value = str(value)
         self._digit_array.__setitem__(self.l - key, value)
 
@@ -57,7 +59,7 @@ class Palindrome(NumberConstructor):
 
     def __setitem__(self, key, value: int or str):
         super().__setitem__(key, value)
-        self._digit_array.__setitem__(key - 1, value)
+        self._digit_array.__setitem__(key - 1, str(value))
 
 
 class NType:
