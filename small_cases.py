@@ -1,2 +1,5 @@
-def small_cases(n_in_base, g):
+from numbers import DeltaNumber
+
+
+def small_cases(n: DeltaNumber):
     pass
