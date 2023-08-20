@@ -1,4 +1,4 @@
-from numbers import DeltaNumber
+from number_objects import DeltaNumber
 from regular_cases import regular_cases
 from small_cases import small_cases
 

@@ -1,4 +1,4 @@
-from numbers import DeltaNumber, NType
+from number_objects import DeltaNumber, NType
 
 
 def algorithm_1(n: DeltaNumber):
