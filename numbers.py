@@ -14,7 +14,7 @@ def base_repr(n: int, g: int) -> str:
     return ''.join(reversed(base_g_digits)) or '0'
 
 
-class PalindromeConstructor:
+class Palindrome:
     def __init__(self, g, number_of_digits, *digits):
         self.g = g
         self.l = number_of_digits
@@ -25,7 +25,7 @@ class PalindromeConstructor:
 
     def __getitem__(self, item):
         if isinstance(item, slice):
-            raise TypeError("PalindromeConstructor does not support slice notation")
+            raise TypeError("Palindrome does not support slice notation")
 
         digit = self._digit_array.__getitem__(self.l - 1 - item)
         if digit == '.':
@@ -39,7 +39,7 @@ class PalindromeConstructor:
         self._digit_array.__setitem__(self.l - 1 - key, value)
 
     def __repr__(self):
-        return f'PalindromeConstructor: {"".join(self._digit_array)}'
+        return f'Palindrome: {"".join(self._digit_array)}'
 
 
 class NType:
@@ -130,63 +130,63 @@ class DeltaNumber:
 
         return self._ntype
 
-    def base_palindromes(self) -> (PalindromeConstructor, PalindromeConstructor, PalindromeConstructor):
+    def base_palindromes(self) -> (Palindrome, Palindrome, Palindrome):
         l = self.l
         g = self.g
 
         if self.ntype == NType.A_1:
-            p1 = PalindromeConstructor(g, l, self[l - 1])
-            p2 = PalindromeConstructor(g, l - 1, self[l - 2] - 1)
-            p3 = PalindromeConstructor(g, l - 2, self.D(self[0] - self[l - 1] - self[l - 2] + 1))
+            p1 = Palindrome(g, l, self[l - 1])
+            p2 = Palindrome(g, l - 1, self[l - 2] - 1)
+            p3 = Palindrome(g, l - 2, self.D(self[0] - self[l - 1] - self[l - 2] + 1))
         elif self.ntype == NType.A_2:
-            p1 = PalindromeConstructor(g, l, self[l - 1])
-            p2 = PalindromeConstructor(g, l - 1, self[l - 2] - 2)
-            p3 = PalindromeConstructor(g, l - 2, 1)
+            p1 = Palindrome(g, l, self[l - 1])
+            p2 = Palindrome(g, l - 1, self[l - 2] - 2)
+            p3 = Palindrome(g, l - 2, 1)
         elif self.ntype == NType.A_3:
-            p1 = PalindromeConstructor(g, l, self[l - 1] - 1)
-            p2 = PalindromeConstructor(g, l - 1, g - 1)
-            p3 = PalindromeConstructor(g, l - 2, self.D(self[0] - self[l - 1] + 2))
+            p1 = Palindrome(g, l, self[l - 1] - 1)
+            p2 = Palindrome(g, l - 1, g - 1)
+            p3 = Palindrome(g, l - 2, self.D(self[0] - self[l - 1] + 2))
         elif self.ntype == NType.A_4:
-            p1 = PalindromeConstructor(g, l, self[l - 1] - 1)
-            p2 = PalindromeConstructor(g, l - 1, g - 2)
-            p3 = PalindromeConstructor(g, l - 2, 1)
+            p1 = Palindrome(g, l, self[l - 1] - 1)
+            p2 = Palindrome(g, l - 1, g - 2)
+            p3 = Palindrome(g, l - 2, 1)
         elif self.ntype == NType.A_5:
-            p1 = PalindromeConstructor(g, l - 1, g - 1)
-            p2 = PalindromeConstructor(g, l - 2, self[l - 3] + 1)
-            p3 = PalindromeConstructor(g, l - 3, self.D(self[0] - self[l - 3]))
+            p1 = Palindrome(g, l - 1, g - 1)
+            p2 = Palindrome(g, l - 2, self[l - 3] + 1)
+            p3 = Palindrome(g, l - 3, self.D(self[0] - self[l - 3]))
         elif self.ntype == NType.A_6:
-            p1 = PalindromeConstructor(g, l - 1, g - 1)
-            p2 = PalindromeConstructor(g, l - 2, self[l - 3] + 2)
-            p3 = PalindromeConstructor(g, l - 3, g - 1)
+            p1 = Palindrome(g, l - 1, g - 1)
+            p2 = Palindrome(g, l - 2, self[l - 3] + 2)
+            p3 = Palindrome(g, l - 3, g - 1)
 
         elif self.ntype == NType.B_1:
-            p1 = PalindromeConstructor(g, l, 1, self[l - 2])
-            p2 = PalindromeConstructor(g, l - 2, self[l - 3] - 1)
-            p3 = PalindromeConstructor(g, l - 3, self.D(self[0] - self[l - 3]))
+            p1 = Palindrome(g, l, 1, self[l - 2])
+            p2 = Palindrome(g, l - 2, self[l - 3] - 1)
+            p3 = Palindrome(g, l - 3, self.D(self[0] - self[l - 3]))
         elif self.ntype == NType.B_2:
-            p1 = PalindromeConstructor(g, l, 1, self[l - 2])
-            p2 = PalindromeConstructor(g, l - 2, self[l - 3] - 2)
-            p3 = PalindromeConstructor(g, l - 3, 1)
+            p1 = Palindrome(g, l, 1, self[l - 2])
+            p2 = Palindrome(g, l - 2, self[l - 3] - 2)
+            p3 = Palindrome(g, l - 3, 1)
         elif self.ntype == NType.B_3:
-            p1 = PalindromeConstructor(g, l, 1, self[l - 2] - 1)
-            p2 = PalindromeConstructor(g, l - 2, g - 2)
-            p3 = PalindromeConstructor(g, l - 3, 1)
+            p1 = Palindrome(g, l, 1, self[l - 2] - 1)
+            p2 = Palindrome(g, l - 2, g - 2)
+            p3 = Palindrome(g, l - 3, 1)
         elif self.ntype == NType.B_4:
-            p1 = PalindromeConstructor(g, l, 1, self[l - 2])
-            p2 = PalindromeConstructor(g, l - 2, 1)
-            p3 = PalindromeConstructor(g, l - 3, g - 2)
+            p1 = Palindrome(g, l, 1, self[l - 2])
+            p2 = Palindrome(g, l - 2, 1)
+            p3 = Palindrome(g, l - 3, g - 2)
         elif self.ntype == NType.B_5:
-            p1 = PalindromeConstructor(g, l, 1, self[l - 2] - 1)
-            p2 = PalindromeConstructor(g, l - 2, g - 1)
-            p3 = PalindromeConstructor(g, l - 3, self[0])
+            p1 = Palindrome(g, l, 1, self[l - 2] - 1)
+            p2 = Palindrome(g, l - 2, g - 1)
+            p3 = Palindrome(g, l - 3, self[0])
         elif self.ntype == NType.B_6:
-            p1 = PalindromeConstructor(g, l, 1, self[l - 2])
-            p2 = PalindromeConstructor(g, l - 2, 2)
-            p3 = PalindromeConstructor(g, l - 3, self.D(self[0] - 3))
+            p1 = Palindrome(g, l, 1, self[l - 2])
+            p2 = Palindrome(g, l - 2, 2)
+            p3 = Palindrome(g, l - 3, self.D(self[0] - 3))
         elif self.ntype == NType.B_7:
-            p1 = PalindromeConstructor(g, l, 1, self[l - 2])
-            p2 = PalindromeConstructor(g, l - 2, 1)
-            p3 = PalindromeConstructor(g, l - 3, 1)
+            p1 = Palindrome(g, l, 1, self[l - 2])
+            p2 = Palindrome(g, l - 2, 1)
+            p3 = Palindrome(g, l - 3, 1)
         else:
             raise TypeError('No NType assigned to self')
 
