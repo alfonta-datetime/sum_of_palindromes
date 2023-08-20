@@ -26,8 +26,13 @@ class NumberConstructor:
     def __getitem__(self, item):
         if isinstance(item, slice):
             raise TypeError(f"{self.__class__.__name__} does not support slice notation")
+        if not 1 <= item <= self.l:
+            raise IndexError(f"{self.__class__.__name__} indexes must be between 1 and: {self.l}")
 
-        digit = self._digit_array.__getitem__(self.l - 1 - item)
+        # an array is arranged from left to right, but the nth digit
+        # of a number is nth from the right.
+        # in the article, the first digit of the palindromes and carries is 1.
+        digit = self._digit_array.__getitem__(self.l - item)
         if digit == '.':
             return '.'
         else:
@@ -35,10 +40,10 @@ class NumberConstructor:
 
     def __setitem__(self, key, value: int or str):
         value = str(value)
-        self._digit_array.__setitem__(key, value)
+        self._digit_array.__setitem__(self.l - key, value)
 
     def __repr__(self):
-        return f'{self.__class__.__name__}: {"".join(self._digit_array)}'
+        return f'{self.__class__.__name__}: {"".join(self._digit_array)}, g={self.g}'
 
 
 class CarryColumn(NumberConstructor):
@@ -52,7 +57,7 @@ class Palindrome(NumberConstructor):
 
     def __setitem__(self, key, value: int or str):
         super().__setitem__(key, value)
-        self._digit_array.__setitem__(self.l - 1 - key, value)
+        self._digit_array.__setitem__(key - 1, value)
 
 
 class NType:
@@ -80,15 +85,20 @@ class DeltaNumber:
         n_in_base = base_repr(n, g)
         self.n_in_base = n_in_base
         self.l = len(n_in_base)
-        self._reversed_n_in_base = ''.join(reversed(n_in_base))
+        self._digit_array = list(n_in_base)
 
         self.p1, self.p2, self.p3 = self.base_palindromes()
+        self.carry = CarryColumn(g, self.l)
 
     def __getitem__(self, item):
-        return int(self._reversed_n_in_base.__getitem__(item), base=self.g)
+        if not 0 <= item <= self.l - 1:
+            raise IndexError(f"{self.__class__.__name__} indexes must be between 0 and: {self.l - 1}")
+        # an array is arranged from left to right, but the nth digit
+        # of a number is nth from the right.
+        return int(self._digit_array.__getitem__(self.l - 1 - item), base=self.g)
 
     def __repr__(self):
-        return f'DeltaNumber: {self.n_in_base}'
+        return f'DeltaNumber: {self.n_in_base}, g={self.g}'
 
     def D(self, a):
         return a % self.g
