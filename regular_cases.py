@@ -77,3 +77,7 @@ if __name__ == '__main__':
     n = DeltaNumber(135_948_762, 10)
     regular_cases(n)
     print(n)
+    print(n.p1)
+    print(n.p2)
+    print(n.p3)
+    assert n.p1 + n.p2 + n.p3 == n

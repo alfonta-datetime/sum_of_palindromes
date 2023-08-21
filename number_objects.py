@@ -14,38 +14,70 @@ def base_repr(n: int, g: int) -> str:
     return ''.join(reversed(base_g_digits)) or '0'
 
 
-class NumberConstructor:
-    def __init__(self, g, number_of_digits, *digits):
+class NumberArray:
+    def __init__(self, g, number_of_digits):
         self.g = g
         self.l = number_of_digits
         self._digit_array = ['.' for i in range(number_of_digits)]
 
-        for i, d in enumerate(digits):
-            self[i+1] = d
+    @property
+    def array_access_bias(self):
+        raise NotImplementedError()
 
     def __getitem__(self, item):
         if isinstance(item, slice):
-            raise TypeError(f"{self.__class__.__name__} does not support slice notation")
-        if not 1 <= item <= self.l:
-            raise IndexError(f"{self.__class__.__name__} indexes must be between 1 and: {self.l}")
+            raise TypeError(f"{self.__class__.__name__} object is not subscriptable")
+        if not 0 + self.array_access_bias <= item <= self.l - 1 + self.array_access_bias:
+            raise IndexError(f"{self.__class__.__name__} indexes must be between: {0 + self.array_access_bias}"
+                             f" and: {self.l - 1 + self.array_access_bias}")
 
-        # an array is arranged from left to right, but the nth digit
-        # of a number is nth from the right.
-        # in the article, the first digit of the palindromes and carries is 1.
-        digit = self._digit_array.__getitem__(self.l - item)
+        digit = self._digit_array.__getitem__(item - self.array_access_bias)
         if digit == '.':
             return '.'
         else:
             return int(digit, base=self.g)
 
-    def __setitem__(self, key, value: int or str):
-        if not 1 <= key <= self.l:
-            raise IndexError(f"{self.__class__.__name__} indexes must be between 1 and: {self.l}")
-        value = str(value)
-        self._digit_array.__setitem__(self.l - key, value)
+    @property
+    def _int_value(self) -> int:
+        if '.' in self._digit_array:
+            raise ValueError(f"{self} still has undetermined digits")
+        return int("".join(reversed(self._digit_array)), base=self.g)
+
+    def __eq__(self, other):
+        return self._int_value == other
+
+    def __add__(self, other):
+        return self._int_value + other
+
+    def __radd__(self, other):
+        return self._int_value + other
 
     def __repr__(self):
-        return f'{self.__class__.__name__}: {"".join(self._digit_array)}, g={self.g}'
+        """
+        an array is arranged from left to right,
+        but the nth digit of a number is nth from the right,
+        so we reverse the array when we present it.
+        """
+        return f'{self.__class__.__name__}: {"".join(reversed(self._digit_array))}, g={self.g}'
+
+
+class NumberConstructor(NumberArray):
+    def __init__(self, g, number_of_digits, *digits):
+        super().__init__(g, number_of_digits)
+
+        for i, d in enumerate(digits):
+            self[i+1] = d
+
+    @property
+    def array_access_bias(self):
+        """in the article, the first digit of the palindromes and carries is 1"""
+        return 1
+
+    def __setitem__(self, key, value: int or str):
+        if not 0 + self.array_access_bias <= key <= self.l - 1 + self.array_access_bias:
+            raise IndexError(f"{self.__class__.__name__} indexes must be between 1 and: {self.l}")
+        value = str(value)
+        self._digit_array.__setitem__(key - self.array_access_bias, value)
 
 
 class CarryColumn(NumberConstructor):
@@ -58,8 +90,12 @@ class Palindrome(NumberConstructor):
         super().__init__(g, number_of_digits, *digits)
 
     def __setitem__(self, key, value: int or str):
+        """
+        Since this is a palindrome, we need to set the
+        (key)'th digit from the right and the (key)'th digit from the left
+        """
         super().__setitem__(key, value)
-        self._digit_array.__setitem__(key - 1, str(value))
+        self._digit_array.__setitem__(self.l - 1 - (key - self.array_access_bias), str(value))
 
 
 class NType:
@@ -79,28 +115,20 @@ class NType:
     B_7 = 'B_7'
 
 
-class DeltaNumber:
+class DeltaNumber(NumberArray):
     def __init__(self, n, g):
-        self.g = g
-        self._ntype = None
-
         n_in_base = base_repr(n, g)
-        self.n_in_base = n_in_base
-        self.l = len(n_in_base)
-        self._digit_array = list(n_in_base)
+        super().__init__(g, len(n_in_base))
+
+        self._ntype = None
+        self._digit_array = list(reversed(n_in_base))
 
         self.p1, self.p2, self.p3 = self.base_palindromes()
         self.carry = CarryColumn(g, self.l)
 
-    def __getitem__(self, item):
-        if not 0 <= item <= self.l - 1:
-            raise IndexError(f"{self.__class__.__name__} indexes must be between 0 and: {self.l - 1}")
-        # an array is arranged from left to right, but the nth digit
-        # of a number is nth from the right.
-        return int(self._digit_array.__getitem__(self.l - 1 - item), base=self.g)
-
-    def __repr__(self):
-        return f'DeltaNumber: {self.n_in_base}, g={self.g}'
+    @property
+    def array_access_bias(self):
+        return 0
 
     def D(self, a):
         return a % self.g
