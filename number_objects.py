@@ -255,5 +255,5 @@ class DeltaNumber(NumberArray):
     def is_special(self):
         if self.p1.l % 2 == 0:
             m = self.p1.l // 2
-            return self.p1.l[m] == 0 or self.p1.l[m - 1] == 0
+            return self.p1[m] == 0 or self.p1[m - 1] == 0
         return False
