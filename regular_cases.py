@@ -60,13 +60,12 @@ def algorithm_2(n: DeltaNumber):
     # steps 3<=i<=m-1
     for i in range(3, m):
         if z[i - 1] <= n[2 * m - i - 1] - 1:
-            xi = x[i] = 1
+            x[i] = 1
         else:
-            xi = x[i] = 0
-        yi = y[i] = n.D(n[2 * m - i - 1] - z[i - 1] - 1)
-        zi = z[i] = n.D(n[i - 1] - x[i] - y[i] - c[i - 1])
+            x[i] = 0
+        y[i] = n.D(n[2 * m - i - 1] - z[i - 1] - 1)
+        z[i] = n.D(n[i - 1] - x[i] - y[i] - c[i - 1])
         n.carry(i)
-        ci = c[i]
 
     # step m
     x[m] = 0
