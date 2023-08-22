@@ -55,7 +55,7 @@ class NumberArray:
     def __repr__(self):
         """
         an array is arranged from left to right,
-        but the nth digit of a number is nth from the right,
+        but the Nth digit of a number is Nth from the right,
         so we reverse the array when we present it.
         """
         return f'{self.__class__.__name__}: {"".join(reversed(self._digit_array))}, g={self.g}'
@@ -124,7 +124,7 @@ class DeltaNumber(NumberArray):
         self._digit_array = list(reversed(n_in_base))
 
         self.p1, self.p2, self.p3 = self.base_palindromes()
-        self.carry = CarryColumn(g, self.l)
+        self.c = CarryColumn(g, self.l, (self.p1[1] + self.p2[1] + self.p3[1]) // g)  # step 1 in all algorithms
 
     @property
     def array_access_bias(self):
@@ -132,6 +132,14 @@ class DeltaNumber(NumberArray):
 
     def D(self, a):
         return a % self.g
+
+    def carry(self, i):
+        """
+        carry the sum of the i column of palindromes -
+        sum the ith digits of the palindromes and the previous carry, and subtract the corresponding digit of n.
+        we floor-divide this number in the base, to get only the second digit.
+        """
+        self.c[i] = (self.p1[i] + self.p2[i] + self.p3[i] + self.c[i-1] - self[i-1]) // self.g
 
     @property
     def ntype(self):

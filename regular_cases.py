@@ -3,45 +3,40 @@ from number_objects import DeltaNumber, NType
 
 def algorithm_1(n: DeltaNumber):
     # conventions
-    g = n.g
     m = n.l // 2
+    x, y, z = n.p1, n.p2, n.p3
+    c = n.c
 
-    # step 1
-    x1, y1, z1 = n.p1[1], n.p2[1], n.p3[1]
-    n.carry[1] = c1 = (x1 + y1 + z1) // g
-
+    # step 1 - define the carry, done in the __init__ of the DeltaNumber object
     # step 2
-    if z1 <= n[2 * m - 2] - 1:
-        x2 = n.D(n[2 * m - 1] - y1)
+    if z[1] <= n[2 * m - 2] - 1:
+        x[2] = n.D(n[2 * m - 1] - y[1])
     else:
-        x2 = n.D(n[2 * m - 1] - y1 - 1)
-    y2 = n.D(n[2 * m - 2] - z1 - 1)
-    z2 = n.D(n[1] - x2 - y2 - n.carry[1])
-    c2 = (x2 + y2 + z2 + n.carry[1] - n[1]) // g
-    n.p1[2], n.p2[2], n.p3[2], n.carry[2] = x2, y2, z2, c2
+        x[2] = n.D(n[2 * m - 1] - y[1] - 1)
+    y[2] = n.D(n[2 * m - 2] - z[1] - 1)
+    z[2] = n.D(n[1] - x[2] - y[2] - c[1])
+    n.carry(2)
 
     # steps 3<=i<=m
     for i in range(3, m + 1):
-        if n.p3[i - 1] <= n[2 * m - i] - 1:
-            xi = 1
+        if z[i - 1] <= n[2 * m - i] - 1:
+            x[i] = 1
         else:
-            xi = 0
-        yi = n.D(n[2 * m - i] - n.p3[i - 1] - 1)
-        zi = n.D(n[i - 1] - xi - yi - n.carry[i - 1])
-        ci = (xi + yi + zi + n.carry[i - 1] - n[i - 1]) // g
-        n.p1[i], n.p2[i], n.p3[i], n.carry[i] = xi, yi, zi, ci
+            x[i] = 0
+        y[i] = n.D(n[2 * m - i] - z[i - 1] - 1)
+        z[i] = n.D(n[i - 1] - x[i] - y[i] - c[i - 1])
+        n.carry(i)
 
     # adjustment step
-    cm = ci  # NOQA
-    if cm == 1:
-        n.p1[m + 1] = 0
-    elif cm == 0:
-        n.p1[m + 1] = 1
-    elif cm == 2:
-        n.p1[m + 1] = 0
-        n.p2[m + 1] -= 1
-        n.p2[m] -= 1
-        n.p3[m] = 0
+    if c[m] == 1:
+        x[m + 1] = 0
+    elif c[m] == 0:
+        x[m + 1] = 1
+    elif c[m] == 2:
+        x[m + 1] = 0
+        y[m + 1] -= 1
+        y[m] -= 1
+        z[m] = 0
 
     return n
 
@@ -89,3 +84,4 @@ if __name__ == '__main__':
     print(n.p2)
     print(n.p3)
     print(f"{n.p1} + {n.p2} + {n.p3} == {n.p1 + n.p2 + n.p3}")
+    assert n.p1 + n.p2 + n.p3 == n
