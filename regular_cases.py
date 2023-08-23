@@ -128,7 +128,6 @@ def algorithm_3(n: DeltaNumber):
     # step m
     x[m + 1] = 0
     y[m] = n.D(n[m - 1] - z[m - 1] - x[m] - c[m - 1])
-    n.carry(m)
 
     # adjustment step
     # c[m] is in (0, 1, 2). if c[m] == 0, no adjustment is needed.
