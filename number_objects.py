@@ -21,17 +21,17 @@ class NumberArray:
         self._digit_array = ['.' for i in range(number_of_digits)]
 
     @property
-    def array_access_bias(self):
+    def _array_access_bias(self):
         raise NotImplementedError()
 
     def __getitem__(self, item):
         if isinstance(item, slice):
             raise TypeError(f"{self.__class__.__name__} object is not subscriptable")
-        if not 0 + self.array_access_bias <= item <= self.l - 1 + self.array_access_bias:
-            raise IndexError(f"{self.__class__.__name__} indexes must be between: {0 + self.array_access_bias}"
-                             f" and: {self.l - 1 + self.array_access_bias}")
+        if not 0 + self._array_access_bias <= item <= self.l - 1 + self._array_access_bias:
+            raise IndexError(f"{self.__class__.__name__} indexes must be between: {0 + self._array_access_bias}"
+                             f" and: {self.l - 1 + self._array_access_bias}")
 
-        digit = self._digit_array.__getitem__(item - self.array_access_bias)
+        digit = self._digit_array.__getitem__(item - self._array_access_bias)
         if digit == '.':
             return '.'
         else:
@@ -69,15 +69,15 @@ class NumberConstructor(NumberArray):
             self[i+1] = d
 
     @property
-    def array_access_bias(self):
+    def _array_access_bias(self):
         """in the article, the first digit of the palindromes and carries is 1"""
         return 1
 
     def __setitem__(self, key, value: int or str):
-        if not 0 + self.array_access_bias <= key <= self.l - 1 + self.array_access_bias:
+        if not 0 + self._array_access_bias <= key <= self.l - 1 + self._array_access_bias:
             raise IndexError(f"{self.__class__.__name__} indexes must be between 1 and: {self.l}")
         value = str(value)
-        self._digit_array.__setitem__(key - self.array_access_bias, value)
+        self._digit_array.__setitem__(key - self._array_access_bias, value)
 
 
 class CarryColumn(NumberConstructor):
@@ -95,7 +95,7 @@ class Palindrome(NumberConstructor):
         (key)'th digit from the right and the (key)'th digit from the left
         """
         super().__setitem__(key, value)
-        self._digit_array.__setitem__(self.l - 1 - (key - self.array_access_bias), str(value))
+        self._digit_array.__setitem__(self.l - 1 - (key - self._array_access_bias), str(value))
 
 
 class NType:
@@ -119,6 +119,7 @@ class DeltaNumber(NumberArray):
     def __init__(self, n, g):
         n_in_base = base_repr(n, g)
         super().__init__(g, len(n_in_base))
+        self.m = self.l // 2
 
         self._ntype = None
         self._digit_array = list(reversed(n_in_base))
@@ -127,7 +128,7 @@ class DeltaNumber(NumberArray):
         self.c = CarryColumn(g, self.l, (self.p1[1] + self.p2[1] + self.p3[1]) // g)  # step 1 in all algorithms
 
     @property
-    def array_access_bias(self):
+    def _array_access_bias(self):
         return 0
 
     def D(self, a):
@@ -169,23 +170,22 @@ class DeltaNumber(NumberArray):
         # B types
         if self[l - 1] == 1:
             if self[l - 2] <= 2:
-                if self[l - 3] <= 4 and self.D(self[0] - self[l - 3]) != 0:
+                if self[l - 3] >= 4 and self.D(self[0] - self[l - 3]) != 0:
                     self._ntype = NType.B_1
-                elif self[l - 3] <= 3 and self.D(self[0] - self[l - 3]) == 0:
+                elif self[l - 3] >= 3 and self.D(self[0] - self[l - 3]) == 0:
                     self._ntype = NType.B_2
-            elif self[l - 2] in (1, 2):
-                if self[l - 3] == 3:
-                    if self.D(self[0] - 3) != 0:
-                        self._ntype = NType.B_6
-                    elif self[0] == 3:
-                        self._ntype = NType.B_7
-                elif self[0] == 0:
-                    if self[l - 3] in (0, 1):
-                        self._ntype = NType.B_3
-                    elif self[l - 3] in (2, 3):
-                        self._ntype = NType.B_4
-                elif self[l - 3] in (0, 1, 2):
-                    self._ntype = NType.B_5
+
+            if self[0] == 0:
+                if self[l - 3] in (0, 1):
+                    self._ntype = NType.B_3
+                else:
+                    self._ntype = NType.B_4
+            elif self[l-3] in (0, 1, 2):
+                self._ntype = NType.B_5
+            elif self[0] == 3:
+                self._ntype = NType.B_7
+            else:
+                self._ntype = NType.B_6
 
         return self._ntype
 

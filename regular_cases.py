@@ -3,7 +3,7 @@ from number_objects import DeltaNumber, NType
 
 def algorithm_1(n: DeltaNumber):
     # conventions
-    m = n.l // 2
+    m = n.m
     x, y, z = n.p1, n.p2, n.p3
     c = n.c
 
@@ -43,7 +43,7 @@ def algorithm_1(n: DeltaNumber):
 
 def algorithm_2(n: DeltaNumber):
     g = n.g
-    m = n.l // 2
+    m = n.m
     x, y, z = n.p1, n.p2, n.p3
     c = n.c
 
@@ -80,10 +80,10 @@ def algorithm_2(n: DeltaNumber):
             y[m] -= 1
         else:
             if y[m - 1] != 0:
-                x[m + 1] = 1    # also assigns x[m]
-                y[m + 1] -= 1   # also assigns y[m - 1]
-                y[m] = g - 2    # only assigns y[m]
-                z[m] += 1       # also assigns z[m - 1]
+                x[m + 1] = 1  # also assigns x[m]
+                y[m + 1] -= 1  # also assigns y[m - 1]
+                y[m] = g - 2  # only assigns y[m]
+                z[m] += 1  # also assigns z[m - 1]
             elif z[m - 1] != 0:
                 y[m + 1] = y[m] = 0
                 z[m] -= 1
@@ -99,7 +99,63 @@ def algorithm_2(n: DeltaNumber):
 
 
 def algorithm_3(n: DeltaNumber):
-    pass
+    g = n.g
+    m = n.m
+    x, y, z = n.p1, n.p2, n.p3
+    c = n.c
+
+    # step 1 - define the carry, done in the __init__ of the DeltaNumber object
+
+    # step 2
+    if z[1] <= n[2 * m - 3] - 1:
+        x[3] = n.D(n[2 * m - 2] - y[1])
+    else:
+        x[3] = n.D(n[2 * m - 2] - y[1] - 1)
+    y[2] = n.D(n[2 * m - 3] - z[1] - 1)
+    z[2] = n.D(n[1] - x[2] - y[2] - c[1])
+    n.carry(2)
+
+    # steps 3<=i<=m-1
+    for i in range(3, m):
+        if z[i - 1] <= n[2 * m - i - 1] - 1:
+            x[i + 1] = 1
+        else:
+            x[i + 1] = 0
+        y[i] = n.D(n[2 * m - i - 1] - z[i - 1] - 1)
+        z[i] = n.D(n[i - 1] - x[i] - y[i] - c[i - 1])
+        n.carry(i)
+
+    # step m
+    x[m + 1] = 0
+    y[m] = n.D(n[m - 1] - z[m - 1] - x[m] - c[m - 1])
+    n.carry(m)
+
+    # adjustment step
+    # c[m] is in (0, 1, 2). if c[m] == 0, no adjustment is needed.
+    if c[m] == 1:
+        x[m + 1] = 1
+    elif c[m] == 2:
+        if y[m - 1] != 0:
+            if z[m - 1] != g - 1:
+                y[m + 1] -= 1
+                y[m] -= 1
+                z[m] += 1
+            else:
+                x[m + 1] = 1
+                y[m + 1] -= 1
+                z[m] = 0
+        elif z[m - 1] != g - 1:
+            x[m + 2] -= 1
+            y[m + 1] = g -1
+            y[m] -= 1
+            z[m] += 1
+        else:
+            x[m + 2] -= 1
+            x[m + 1] = 1
+            y[m + 1] = g - 1
+            z[m] = 0
+
+    return n
 
 
 def algorithm_4(n: DeltaNumber):
@@ -130,7 +186,7 @@ def regular_cases(n: DeltaNumber):
 
 
 if __name__ == '__main__':
-    n = DeltaNumber(2718281828459045235360, 10)
+    n = DeltaNumber(120205690315959428539, 10)
     regular_cases(n)
     print(n)
     print(n.p1)
