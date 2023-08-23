@@ -220,9 +220,9 @@ def algorithm_4(n: DeltaNumber):
                     z[m] = 0
                     z[m - 1] = 3
                 else:
-                    x[m+2] -= 1
-                    x[m+1] = 2
-                    y[m+1] = g -1
+                    x[m + 2] -= 1
+                    x[m + 1] = 2
+                    y[m + 1] = g - 1
                     y[m] -= 3
                     z[m] = 0
                     z[m - 1] = 3
@@ -230,59 +230,59 @@ def algorithm_4(n: DeltaNumber):
         if z[m - 1] != g - 1:
             if y[m - 1] != 0:
                 y[m] -= 1
-                z[m-1] += 1
+                z[m - 1] += 1
             else:
-                x[m+1] = 0
-                y[m] = g- 1
-                z[m-1] += 2
-        elif z[m-2] != 0:
-            if y[m-2] != g- 1:
-                x[m+1] = 0
-                y[m+1] += 1
+                x[m + 1] = 0
+                y[m] = g - 1
+                z[m - 1] += 2
+        elif z[m - 2] != 0:
+            if y[m - 2] != g - 1:
+                x[m + 1] = 0
+                y[m + 1] += 1
                 y[m] += 1
                 z[m] -= 1
-                z[m-1] = g - 2
+                z[m - 1] = g - 2
             elif y[m - 1] not in (0, 1):
-                x[m+1] = 2
-                x[m+1] = g - 2
+                x[m + 1] = 2
+                x[m + 1] = g - 2
                 y[m] -= 2
                 z[m] += 1
-                z[m-1] = 1
+                z[m - 1] = 1
             elif y[m - 1] == 0:
-                y[m+1] = y[m] = g - 2
+                y[m + 1] = y[m] = g - 2
                 z[m] += 1
                 z[m - 1] = 1
             else:
                 y[m + 1] = g - 2
-                y[m] = g -1
+                y[m] = g - 1
                 z[m] += 1
                 z[m - 1] = 1
         elif y[m - 2] != 0:
             if y[m - 1] not in (0, 1):
-                x[m+1] = 2
+                x[m + 1] = 2
                 y[m + 1] -= 1
                 y[m] -= 2
-                z[m] = z[m-1] = 1
-            elif y[m-1] == 0:
-                y[m+1] -= 1
+                z[m] = z[m - 1] = 1
+            elif y[m - 1] == 0:
+                y[m + 1] -= 1
                 y[m] = g - 2
-                z[m] = z[m-1] = 1
+                z[m] = z[m - 1] = 1
             else:
                 y[m + 1] -= 1
                 y[m] = g - 1
                 z[m] = z[m - 1] = 1
         else:
             if y[m - 1] not in (0, 1):
-                x[m+2] -= 1
-                x[m+1] = 2
-                y[m+1] = g - 1
+                x[m + 2] -= 1
+                x[m + 1] = 2
+                y[m + 1] = g - 1
                 y[m] -= 2
                 z[m] = z[m - 1] = 1
-            elif y[m-1] == 0:
+            elif y[m - 1] == 0:
                 x[m + 2] -= 1
                 x[m + 1] = 1
                 y[m + 1] = g - 1
-                y[m] = g -2
+                y[m] = g - 2
                 z[m] = z[m - 1] = 1
             else:
                 x[m + 2] -= 1
@@ -291,7 +291,8 @@ def algorithm_4(n: DeltaNumber):
                 z[m] = z[m - 1] = 1
     elif x[m] + c[m - 1] == 3:
         y[m] -= 1
-        z[m-1] = 0
+        z[m - 1] = 0
+
 
 def algorithm_5(n: DeltaNumber):
     pass
