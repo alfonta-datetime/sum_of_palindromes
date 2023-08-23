@@ -121,13 +121,14 @@ def algorithm_4(n: DeltaNumber):
     for i in range(3, m - 1):
         n.step_i(i, 2, 1)
 
-    # step m -1
+    # step m - 1
     if z[m - 2] <= n[m - 1] - 1:
         x[m] = 1
     else:
         x[m] = 0
     y[m - 1] = n.D(n[m - 1] - z[m - 2] - 1)
     z[m - 1] = n.D(n[m - 2] - x[m - 1] - y[m - 1] - c[m - 2])
+    n.carry(m - 1)
 
     # adjustment step
     if x[m] + c[m - 1] == 0 and y[m - 1] != g - 1:
@@ -320,7 +321,8 @@ def regular_cases(n: DeltaNumber):
 if __name__ == '__main__':
     # n = DeltaNumber(314159265358979323846, 10)  # algo 1
     # n = DeltaNumber(2718281828459045235360, 10)  # algo 2
-    n = DeltaNumber(120205690315959428539, 10)  # algo 3
+    # n = DeltaNumber(120205690315959428539, 10)  # algo 3
+    n = DeltaNumber(12267420096203532444, 10)  # algo 4
     regular_cases(n)
     print(n)
     print(n.p1)
