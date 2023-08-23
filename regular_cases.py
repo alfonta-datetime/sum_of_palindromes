@@ -105,7 +105,6 @@ def algorithm_3(n: DeltaNumber):
     c = n.c
 
     # step 1 - define the carry, done in the __init__ of the DeltaNumber object
-
     # step 2
     if z[1] <= n[2 * m - 3] - 1:
         x[3] = n.D(n[2 * m - 2] - y[1])
@@ -158,7 +157,34 @@ def algorithm_3(n: DeltaNumber):
 
 
 def algorithm_4(n: DeltaNumber):
-    pass
+    g = n.g
+    m = n.m
+    x, y, z = n.p1, n.p2, n.p3
+    c = n.c
+
+    # step 1 - define the carry, done in the __init__ of the DeltaNumber object
+    # step 2
+    if z[1] <= n[2 * m - 4] - 1:
+        x[3] = n.D(n[2 * m - 3] - y[1])
+    else:
+        x[3] = n.D(n[2 * m - 3] - y[1] - 1)
+    y[2] = n.D(n[2 * m - 4] - z[1] - 1)
+    z[2] = n.D(n[1] - x[2] - y[2] - c[1])
+    n.carry(2)
+
+    # steps 3<=i<=m-2
+    for i in range(3, m - 1):
+        if z[i - 1] <= n[2 * m - i - 2] - 1:
+            x[i + 1] = 1
+        else:
+            x[i + 1] = 0
+        y[i] = n.D(n[2 * m - i - 2] - z[i - 1] - 1)
+        z[i] = n.D(n[i - 1] - x[i] - y[i] - c[i - 1])
+        n.carry(i)
+
+    # step m
+    x[m + 1] = 0
+    y[m] = n.D(n[m - 1] - z[m - 1] - x[m] - c[m - 1])
 
 
 def algorithm_5(n: DeltaNumber):

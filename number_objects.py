@@ -142,6 +142,57 @@ class DeltaNumber(NumberArray):
         """
         self.c[i] = (self.p1[i] + self.p2[i] + self.p3[i] + self.c[i - 1] - self[i - 1]) // self.g
 
+    def assign_x2(self, n_bias, x_bias):
+        """
+        assign first digit of p1, or x, in step 2 of the algorithm.
+        :param n_bias: the digit of n used is different between algorithms, and is : 2m-2-n_bias.
+        :param x_bias: the digit of x that is assigned is different between algorithms, and is: 2+x_bias.
+        """
+        if self.p3[1] <= self[2 * self.m - 2 - n_bias] - 1:
+            self.p1[2 + x_bias] = self.D(self[2 * self.m - 1 - n_bias] - self.p2[1])
+        else:
+            self.p1[2 + x_bias] = self.D(self[2 * self.m - 1 - n_bias] - self.p2[1] - 1)
+
+    def assign_xi(self, i, n_bias, x_bias):
+        """
+        assign the digit of p1, also referred in the article as x, in step i.
+        this method is used only in steps 3 and above of the algorithms.
+        :param i: step index, and x's, or p1's, digit to assign, minus x_bias
+        :param n_bias: the digit of n used is different between algorithms, and is : 2m-i-n_bias.
+        :param x_bias: the digit of x that is assigned is different between algorithms, and is: i+x_bias.
+        """
+        if self.p3[i - 1] <= self[2 * self.m - i - n_bias] - 1:
+            self.p1[i + x_bias] = 1
+        else:
+            self.p1[i + x_bias] = 0
+
+    def assign_yi(self, i, n_bias):
+        """
+        assign the digit of p2, also referred in the article as y, in step i.
+        :param i: step index, and y's, or p2's, digit to assign
+        :param n_bias: the digit of n used is different between algorithms, and is : 2m-i-n_bias.
+        """
+        self.p2[i] = self.D(self[2 * self.m - i - n_bias] - self.p3[i - 1] - 1)
+
+    def assign_zi(self, i):
+        """
+        assign the digit of p3, also referred in the article as z, in step i.
+        :param i: step index, and z's, or p3's, digit to assign
+        """
+        self.p3[i] = self.D(self[i - 1] - self.p1[i] - self.p2[i] - self.c[i - 1])
+
+    def step_2(self, n_bias, x_bias):
+        self.assign_x2(n_bias, x_bias)
+        self.assign_yi(2, n_bias)
+        self.assign_zi(2)
+        self.carry(2)
+
+    def step_i(self, i, n_bias, x_bias):
+        self.assign_xi(i, n_bias, x_bias)
+        self.assign_yi(i, n_bias)
+        self.assign_zi(i)
+        self.carry(i)
+
     @property
     def ntype(self):
         if self._ntype:
