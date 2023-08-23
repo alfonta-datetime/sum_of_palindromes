@@ -66,7 +66,7 @@ class NumberConstructor(NumberArray):
         super().__init__(g, number_of_digits)
 
         for i, d in enumerate(digits):
-            self[i+1] = d
+            self[i + 1] = d
 
     @property
     def _array_access_bias(self):
@@ -140,7 +140,7 @@ class DeltaNumber(NumberArray):
         sum the ith digits of the palindromes and the previous carry, and subtract the corresponding digit of n.
         we floor-divide this number in the base, to get only the second digit.
         """
-        self.c[i] = (self.p1[i] + self.p2[i] + self.p3[i] + self.c[i-1] - self[i-1]) // self.g
+        self.c[i] = (self.p1[i] + self.p2[i] + self.p3[i] + self.c[i - 1] - self[i - 1]) // self.g
 
     @property
     def ntype(self):
@@ -180,7 +180,7 @@ class DeltaNumber(NumberArray):
                     self._ntype = NType.B_3
                 else:
                     self._ntype = NType.B_4
-            elif self[l-3] in (0, 1, 2):
+            elif self[l - 3] in (0, 1, 2):
                 self._ntype = NType.B_5
             elif self[0] == 3:
                 self._ntype = NType.B_7

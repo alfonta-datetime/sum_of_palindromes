@@ -145,7 +145,7 @@ def algorithm_3(n: DeltaNumber):
                 z[m] = 0
         elif z[m - 1] != g - 1:
             x[m + 2] -= 1
-            y[m + 1] = g -1
+            y[m + 1] = g - 1
             y[m] -= 1
             z[m] += 1
         else:
